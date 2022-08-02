@@ -1,5 +1,8 @@
 package springboot.webapp.payloads;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -31,4 +34,5 @@ public class UserDTO {
 
 	private String about;
 
+	private Set<RoleDTO> roles = new HashSet<>();
 }

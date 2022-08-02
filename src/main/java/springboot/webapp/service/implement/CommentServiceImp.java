@@ -11,10 +11,9 @@ import springboot.webapp.payloads.CommentDTO;
 import springboot.webapp.repository.CommentRepository;
 import springboot.webapp.repository.PostRepository;
 import springboot.webapp.service.CommentService;
-import springboot.webapp.utils.ModelMapping;
 
 @Service
-public class CommentServiceImp implements CommentService, ModelMapping<Comment, CommentDTO> {
+public class CommentServiceImp implements CommentService {
 
 	@Autowired
 	private PostRepository postRepository;
@@ -51,16 +50,6 @@ public class CommentServiceImp implements CommentService, ModelMapping<Comment, 
 		Comment comment = this.commentRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Comment", "id", id));
 		this.commentRepository.delete(comment);
-	}
-
-	@Override
-	public Comment dtoToEntity(CommentDTO dto) {
-		return mapper.map(dto, Comment.class);
-	}
-
-	@Override
-	public CommentDTO entityToDTO(Comment entity) {
-		return mapper.map(entity, CommentDTO.class);
 	}
 
 }

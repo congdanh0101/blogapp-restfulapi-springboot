@@ -5,11 +5,15 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import springboot.webapp.config.AppConstants;
+import springboot.webapp.entity.Role;
 import springboot.webapp.entity.User;
 import springboot.webapp.exception.ResourceNotFoundException;
 import springboot.webapp.payloads.UserDTO;
+import springboot.webapp.repository.RoleRepository;
 import springboot.webapp.repository.UserRepository;
 import springboot.webapp.service.UserService;
 import springboot.webapp.utils.ModelMapping;
@@ -22,6 +26,12 @@ public class UserServiceImp implements UserService, ModelMapping<User, UserDTO> 
 
 	@Autowired
 	private ModelMapper modelMapper;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private RoleRepository roleRepository;
 
 	@Override
 	public UserDTO createUser(UserDTO userDTO) {
@@ -83,5 +93,19 @@ public class UserServiceImp implements UserService, ModelMapping<User, UserDTO> 
 	@Override
 	public UserDTO entityToDTO(User entity) {
 		return this.modelMapper.map(entity, UserDTO.class);
+	}
+
+	@Override
+	public UserDTO registerUser(UserDTO user) {
+
+		User u = dtoToEntity(user);
+		u.setPassword(passwordEncoder.encode(user.getPassword()));
+		Role role =  this.roleRepository.findById(AppConstants.NORMAL_USER).get();
+		u.getRoles().add(role);
+		User savedUser = this.userRepository.save(u);
+		
+		return entityToDTO(savedUser);
+		
+		
 	}
 }
